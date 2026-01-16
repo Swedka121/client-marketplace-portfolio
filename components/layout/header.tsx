@@ -46,15 +46,15 @@ export function HeaderLogoGroup() {
 
 export function Header() {
   return (
-    <header className="px-20 w-[80%] rounded-full h-14 bg-secondary fixed mt-4 ml-[10%] grid grid-rows-1 grid-cols-[1fr_2fr_1fr] gap-6">
-      <nav className="w-full flex flex-row gap-6">
+    <header className="px-20 w-[80%] rounded-b-full h-16 bg-background shadow-[1px_-20px_85px_6px_rgba(0,0,0,0.46)] fixed ml-[10%] grid grid-rows-1 grid-cols-[1fr_3fr_1fr] gap-6 z-2">
+      <nav className="w-full flex flex-row gap-3">
         <HeaderLogoGroup />
         {LINKS.map((el) => (
           <NavLink {...el} key="name" />
         ))}
       </nav>
       <SearchBar className="w-full my-auto" />
-      <nav className="w-full flex items-center justify-end gap-6">
+      <nav className="w-full flex items-center justify-end gap-3">
         <LoginButton preventCheckLogin={true}>
           <CartButton />
           <FavButton />

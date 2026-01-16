@@ -38,7 +38,7 @@ export function SearchBar({ className }: { className: ClassNameValue }) {
     <Popover open={DialogOpen} modal={false}>
       <section
         className={cn(
-          "relative w-50 h-8 border-2 border-foreground rounded-lg cursor-pointer inset-border",
+          "relative w-50 h-8 border-1 border-foreground rounded-lg cursor-pointer inset-border",
           className
         )}
         id="searchBar"
