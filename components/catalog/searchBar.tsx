@@ -7,6 +7,7 @@ import { ClassNameValue } from "tailwind-merge";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import RowItemsCarousel from "./rowItemsCarousel";
 
 export function SearchBar({ className }: { className: ClassNameValue }) {
   const refInput = useRef<HTMLInputElement>(null);

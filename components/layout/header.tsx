@@ -55,7 +55,7 @@ export function Header() {
       </nav>
       <SearchBar className="w-full my-auto" />
       <nav className="w-full flex items-center justify-end gap-3">
-        <LoginButton preventCheckLogin={true}>
+        <LoginButton>
           <CartButton />
           <FavButton />
           <ProfileButton />
