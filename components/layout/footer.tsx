@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="w-screen h-max bg-primary">
       <Container>
-        <section className="grid grid-cols-3 py-24">
+        <section className="grid grid-cols-[2fr_1fr_1fr] py-24 max-lg:grid-rows-3 max-lg:grid-cols-1">
           <article className="flex flex-col h-full">
             <div className="flex felx-row gap-6 items-center">
               <Avatar className="w-24 h-24 ">
@@ -22,9 +22,6 @@ export function Footer() {
                 </p>
               </div>
             </div>
-            <p className="mt-auto text-background">
-              &copy; 2026 Enum Marketplace. All rights reserved.
-            </p>
           </article>
           <nav className="p-4 flex flex-col gap-2">
             <h2 className="text-2xl text-background">Menu</h2>
@@ -54,6 +51,9 @@ export function Footer() {
             </Link>
           </nav>
         </section>
+        <p className="mt-auto text-background p-6">
+          &copy; 2026 Enum Marketplace. All rights reserved.
+        </p>
       </Container>
     </footer>
   );
