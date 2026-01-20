@@ -125,3 +125,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+.blur-center-x {
+  /* This blurs the image itself */
+  filter: blur(2px);
+
+  /* This mask makes the center of the image "disappear" (transparent) 
+     so the sharp background shows through, or vice-versa. 
+     To make only the EDGES blurry, we invert the mask logic: */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black 0%,
+    transparent 40%,
+    transparent 60%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    black 0%,
+    transparent 40%,
+    transparent 60%,
+    black 100%
+  );
+}

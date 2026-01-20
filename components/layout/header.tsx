@@ -12,7 +12,7 @@ import { ProfileButton } from "../auth/profileButton";
 
 const LINKS: { icon: ReactNode; name: string; link?: string }[] = [
   { icon: <HomeIcon size={20} />, name: "Home", link: "/" },
-  { icon: <ListIcon size={20} />, name: "Catalog" },
+  { icon: <ListIcon size={20} />, name: "Catalog", link: "/catalog" },
 ];
 
 export function NavLink({
