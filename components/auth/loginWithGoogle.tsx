@@ -4,24 +4,12 @@
 
 import Image from "next/image";
 import { Button } from "../ui/button";
-import { useEffect } from "react";
+import { useGoogleProvider } from "@/stores/provider/googleProvider.store";
 
 export function LoginWithGoogle() {
+  const googleProviderStore = useGoogleProvider();
   const handleLogin = () => {
-    const { google } = window;
-    if (!google) return;
-
-    google.accounts.oauth2
-      .initCodeClient({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-        scope:
-          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid",
-        ux_mode: "popup",
-        callback(response) {
-          console.log(response);
-        },
-      })
-      .requestCode();
+    googleProviderStore.requestCode();
   };
 
   return (

@@ -15,6 +15,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@types/google.accounts": "^0.0.18",
     "animejs": "^4.2.2",
+    "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",
@@ -24,7 +25,8 @@
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.4.0",
     "three": "^0.182.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
