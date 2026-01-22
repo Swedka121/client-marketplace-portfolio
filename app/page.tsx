@@ -10,7 +10,7 @@ import {
 import { Container } from "../components/layout/container";
 import HeroCarousel from "@/components/heroCarousel";
 import RowItemsCarousel from "@/components/catalog/rowItemsCarousel";
-import { GridItems } from "@/components/catalog/GridItems";
+import { GridItems } from "@/components/catalog/gridItems";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
