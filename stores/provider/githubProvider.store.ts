@@ -3,6 +3,7 @@
 import axios from "axios";
 import { create } from "zustand";
 import { useAuthStore } from "../auth.store";
+import { toast } from "sonner";
 
 export const useGithubProvider = create(() => ({
   requestCode() {
@@ -28,9 +29,18 @@ export const useGithubProvider = create(() => ({
           const urlParams = new URL(currentUrl).searchParams;
           const access = urlParams.get("access");
           const callback = urlParams.get("callback");
+          const error = urlParams.get("error");
 
           if (callback === "true" && access) {
             useAuthStore.getState().setAccess(access);
+            popup.close();
+            clearInterval(timer);
+          }
+
+          if (error !== null) {
+            toast.error("Opps... Something went wrong!", {
+              description: error,
+            });
             popup.close();
             clearInterval(timer);
           }

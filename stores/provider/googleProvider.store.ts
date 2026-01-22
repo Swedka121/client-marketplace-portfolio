@@ -28,6 +28,7 @@ export const useGoogleProvider = create(() => ({
     const data = await axios
       .get(`/auth/login?provider=google&redirect=false&code=${code}`, {
         baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
+        withCredentials: true,
       })
       .then((res) => res.data.access);
 
