@@ -1,5 +1,7 @@
 /** @format */
 
+"use client";
+
 import {
   HeartIcon,
   MailIcon,
@@ -20,6 +22,9 @@ import {
 import { Button } from "../ui/button";
 import { ReactNode } from "react";
 import Link from "next/link";
+import { Avatar } from "@radix-ui/react-avatar";
+import { useAuthStore } from "@/stores/auth.store";
+import { AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const MENUS: {
   label: string;
@@ -55,6 +60,7 @@ const MENUS: {
 ];
 
 export function ProfileButton() {
+  const authStore = useAuthStore();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -63,6 +69,17 @@ export function ProfileButton() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        <DropdownMenuItem className="focus:bg-background">
+          <Avatar>
+            <AvatarImage
+              src={authStore.user?.avatarUrl}
+              className="rounded-full size-9"
+              referrerPolicy="no-referrer"
+            ></AvatarImage>
+            <AvatarFallback>Av</AvatarFallback>
+          </Avatar>
+          <p>{authStore.user?.name}</p>
+        </DropdownMenuItem>
         {MENUS.map((el) => (
           <DropdownMenuGroup key={el.label}>
             <DropdownMenuLabel>{el.label}</DropdownMenuLabel>

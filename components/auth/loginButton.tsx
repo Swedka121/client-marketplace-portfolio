@@ -16,7 +16,7 @@ export function LoginButton({ children, preventCheckLogin }: Props) {
   const authStore = useAuthStore();
   return (
     <AuthorizationSpinner>
-      {preventCheckLogin || authStore.isAuthorized ? (
+      {preventCheckLogin || authStore.isAuthorized == "isAuthorized" ? (
         children
       ) : (
         <Link href="/login">

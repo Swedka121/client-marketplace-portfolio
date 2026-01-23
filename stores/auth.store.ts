@@ -71,8 +71,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         })
         .then((res) => res.data as { access: string })
         .catch((err) => {
-          window.location.pathname = "/login";
           toast.error("You are unauthorized!", { description: err.message });
+          set((prev) => ({ ...prev, isAuthorized: "nonAuthorized" }));
           return Promise.reject();
         });
       useAuthStore.getState().setAccess(data.access);
