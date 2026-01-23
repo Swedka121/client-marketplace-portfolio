@@ -1,12 +1,8 @@
 /** @format */
 
-"use client";
-
 import { LoginWithGithub } from "@/components/auth/loginWithGithub";
 import { LoginWithGoogle } from "@/components/auth/loginWithGoogle";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAuthStore } from "@/stores/auth.store";
 import Image from "next/image";
 
 function Page() {

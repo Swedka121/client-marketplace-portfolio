@@ -21,112 +21,117 @@ interface User {
   avatarUrl: string;
 }
 
+type isAuthorizedStatus = "isAuthorized" | "nonAuthorized" | "Pending";
+
 interface AuthStore {
-  isAuthorized: boolean;
+  isAuthorized: isAuthorizedStatus;
   accessToken: string | null;
   user: User | null;
 
   client: AxiosInstance;
 
+  refreshPromise: Promise<string | null> | null;
+
   setAccess: (access: string | null) => void;
-  recreateClient: () => void;
-  refreshToken: () => Promise<string>;
-  check: () => Promise<void>;
+  refreshToken: () => Promise<string | null>;
+  checkAuthorization: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
-  isAuthorized: false,
+  isAuthorized: "Pending",
   accessToken: null,
   user: null,
-  client: axios.create({
-    baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
-    withCredentials: true,
-  }),
+  client: AuthorizedClient(),
+  refreshPromise: null,
   setAccess(access) {
     if (!access)
       return set((prev) => ({
         ...prev,
         accessToken: null,
-        isAuthorized: false,
+        isAuthorized: "nonAuthorized",
         user: null,
         client: axios.create(),
       }));
     const user = jwtDecode.jwtDecode(access) as User;
-    set((prev) => ({ ...prev, accessToken: access, isAuthorized: true, user }));
-    this.recreateClient();
+    set((prev) => ({
+      ...prev,
+      accessToken: access,
+      isAuthorized: "isAuthorized",
+      user,
+    }));
   },
   async refreshToken() {
-    console.log("refresh!");
-    const data = await axios
-      .get("/auth/refresh", {
-        baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
-        withCredentials: true,
-      })
-      .then((res) => res.data as { access: string })
-      .catch((err) => {
-        // window.location.pathname = "/login";
-        toast.error("You are unauthorized!", { description: err.message });
+    if (get().refreshPromise) return get().refreshPromise;
 
-        return { access: null };
-      });
-    console.log(data);
-    useAuthStore.getState().setAccess(data.access);
-    return data.access as string;
-  },
-  recreateClient() {
-    console.log("client recreated!");
-    const controller = new AbortController();
-    const client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
-      withCredentials: true,
+    return new Promise<string>(async () => {
+      const data = await axios
+        .get("/auth/refresh", {
+          baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
+          withCredentials: true,
+        })
+        .then((res) => res.data as { access: string })
+        .catch((err) => {
+          window.location.pathname = "/login";
+          toast.error("You are unauthorized!", { description: err.message });
+          return Promise.reject();
+        });
+      useAuthStore.getState().setAccess(data.access);
+      Promise.resolve(data.access);
     });
-
-    client.interceptors.request.use((config) => {
-      if (config.headers.has("X-Refreshed")) {
-        toast.warning("You are unauthorized!");
-        config.signal = controller.signal;
-        controller.abort();
-
-        return config;
-      }
-      config.headers.set("X-Refreshed", false);
-      config.headers.Authorization = `Bearer ${get().accessToken}`;
-
-      console.log("Use this client!");
-
-      return config;
-    });
-
-    client.interceptors.response.use(
-      (config) => {
-        return config;
-      },
-      (error: AxiosError) => {
-        console.log(error.status);
-        switch (error.status) {
-          case 401: {
-            const access = useAuthStore.getState().refreshToken();
-
-            const requestConfig = {
-              ...error.request,
-              headers: {
-                Authorization: `Bearer ${access}`,
-              },
-            } as AxiosRequestConfig;
-
-            Promise.resolve(useAuthStore.getState().client(requestConfig));
-
-            break;
-          }
-          default:
-            toast.error(error.message || "Request exited with error!");
-        }
-      },
-    );
-
-    set((prev) => ({ ...prev, client }));
   },
-  async check() {
+
+  async checkAuthorization() {
     console.log(await get().client.get("/auth/check"));
   },
 }));
+
+function AuthorizedClient() {
+  const controller = new AbortController();
+  const client = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
+    withCredentials: true,
+  });
+
+  client.interceptors.request.use((config) => {
+    if (config.headers.get("X-Refreshed") == true) {
+      toast.warning("You are unauthorized!");
+      useAuthStore.getState().isAuthorized = "nonAuthorized";
+      config.signal = controller.signal;
+      controller.abort();
+
+      return config;
+    }
+    config.headers.set("X-Refreshed", false);
+    config.headers.Authorization = `Bearer ${useAuthStore.getState().accessToken}`;
+
+    return config;
+  });
+
+  client.interceptors.response.use(
+    (config) => {
+      return config;
+    },
+    async (error: AxiosError) => {
+      switch (error.status) {
+        case 401: {
+          await useAuthStore.getState().refreshToken();
+
+          const config = {
+            ...error.request,
+            headers: {
+              "X-Refreshed": 1,
+            },
+          } as AxiosRequestConfig;
+
+          Promise.resolve(useAuthStore.getState().client(config));
+
+          break;
+        }
+        default:
+          toast.error(error.message || "Request exited with error!");
+      }
+    },
+  );
+
+  return client;
+}

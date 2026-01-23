@@ -33,5 +33,6 @@ export const useGoogleProvider = create(() => ({
       .then((res) => res.data.access);
 
     useAuthStore.getState().setAccess(data);
+    window.location.pathname = "/";
   },
 }));

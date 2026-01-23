@@ -35,6 +35,7 @@ export const useGithubProvider = create(() => ({
             useAuthStore.getState().setAccess(access);
             popup.close();
             clearInterval(timer);
+            window.location.pathname = "/";
           }
 
           if (error !== null) {

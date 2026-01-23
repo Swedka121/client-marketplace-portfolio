@@ -6,6 +6,7 @@ import "./globals.css";
 import { Header } from "../components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Toaster } from "@/components/ui/sonner";
+import RefreshTrigger from "@/components/auth/refreshTrigger";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
       >
+        <RefreshTrigger />
         <Toaster />
         <Header />
         {children}
