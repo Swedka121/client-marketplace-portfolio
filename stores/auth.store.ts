@@ -4,6 +4,7 @@ import axios, {
   Axios,
   AxiosError,
   AxiosHeaders,
+  AxiosInstance,
   AxiosRequestConfig,
 } from "axios";
 import { create } from "zustand";
@@ -25,18 +26,22 @@ interface AuthStore {
   accessToken: string | null;
   user: User | null;
 
-  client: Axios;
+  client: AxiosInstance;
 
   setAccess: (access: string | null) => void;
   recreateClient: () => void;
   refreshToken: () => Promise<string>;
+  check: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   isAuthorized: false,
   accessToken: null,
   user: null,
-  client: axios.create(),
+  client: axios.create({
+    baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
+    withCredentials: true,
+  }),
   setAccess(access) {
     if (!access)
       return set((prev) => ({
@@ -69,8 +74,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     return data.access as string;
   },
   recreateClient() {
+    console.log("client recreated!");
     const controller = new AbortController();
-    const client = axios.create();
+    const client = axios.create({
+      baseURL: process.env.NEXT_PUBLIC_SERVER_LINK,
+      withCredentials: true,
+    });
 
     client.interceptors.request.use((config) => {
       if (config.headers.has("X-Refreshed")) {
@@ -83,6 +92,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       config.headers.set("X-Refreshed", false);
       config.headers.Authorization = `Bearer ${get().accessToken}`;
 
+      console.log("Use this client!");
+
       return config;
     });
 
@@ -91,8 +102,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         return config;
       },
       (error: AxiosError) => {
-        switch (error.code) {
-          case "Unauthorized": {
+        console.log(error.status);
+        switch (error.status) {
+          case 401: {
             const access = useAuthStore.getState().refreshToken();
 
             const requestConfig = {
@@ -102,7 +114,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
               },
             } as AxiosRequestConfig;
 
-            Promise.resolve(axios(requestConfig));
+            Promise.resolve(useAuthStore.getState().client(requestConfig));
 
             break;
           }
@@ -111,5 +123,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         }
       },
     );
+
+    set((prev) => ({ ...prev, client }));
+  },
+  async check() {
+    console.log(await get().client.get("/auth/check"));
   },
 }));

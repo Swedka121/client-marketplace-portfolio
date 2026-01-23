@@ -10,7 +10,6 @@ import { useAuthStore } from "@/stores/auth.store";
 import Image from "next/image";
 
 function Page() {
-  const authStore = useAuthStore();
   return (
     <section className="w-full h-screen flex items-center justify-center">
       <Image
@@ -23,14 +22,6 @@ function Page() {
         <CardContent className="flex flex-col gap-6">
           <LoginWithGoogle />
           <LoginWithGithub />
-          <Button
-            onClick={async () => {
-              console.log("Try!");
-              await authStore.refreshToken();
-            }}
-          >
-            Check refresh
-          </Button>
         </CardContent>
       </Card>
     </section>
