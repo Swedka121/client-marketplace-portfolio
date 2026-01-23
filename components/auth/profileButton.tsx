@@ -32,17 +32,6 @@ const MENUS: {
   }[];
 }[] = [
   {
-    label: "Cart and favorite",
-    menu: [
-      { icon: <ShoppingCartIcon />, name: "Cart", link: "/cart?tab=cart" },
-      {
-        icon: <HeartIcon />,
-        name: "Favorite",
-        link: "/cart?tab=favorite",
-      },
-    ],
-  },
-  {
     label: "Profile controls",
     menu: [
       {

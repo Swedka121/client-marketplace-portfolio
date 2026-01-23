@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { PropsWithChildren } from "react";
 import { useAuthStore } from "@/stores/auth.store";
+import { AuthorizationSpinner } from "./authorizationSpinner";
 
 interface Props extends PropsWithChildren {
   preventCheckLogin?: boolean;
@@ -13,10 +14,15 @@ interface Props extends PropsWithChildren {
 
 export function LoginButton({ children, preventCheckLogin }: Props) {
   const authStore = useAuthStore();
-  if (preventCheckLogin || authStore.isAuthorized) return children;
   return (
-    <Link href="/login">
-      <Button variant={"default"}>Login</Button>
-    </Link>
+    <AuthorizationSpinner>
+      {preventCheckLogin || authStore.isAuthorized ? (
+        children
+      ) : (
+        <Link href="/login">
+          <Button variant={"default"}>Login</Button>
+        </Link>
+      )}
+    </AuthorizationSpinner>
   );
 }
